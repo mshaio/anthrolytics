@@ -11,6 +11,8 @@
 
 <script>
 
+import { mapGetters } from 'vuex'
+
 export default {
     props: {
         mouseData: null,
@@ -91,7 +93,6 @@ export default {
                     this.xMax = data.x_coord
                 }
             }
-            console.log(this.xMax)
         },
         getYMax() {
             for (var data of this.mouseData.data) {
@@ -99,19 +100,19 @@ export default {
                     this.yMax = data.y_coord
                 }
             }
-            console.log(this.yMax)
         },
         roundToNearestBase(num, base) {
             return Math.round(parseInt(num)/base)*base
         },
-        populateMappedMouseData(base) {            
+        populateMappedMouseData(base) {    
+            this.heatmapData = []        
             let numberOfXSegments = Math.ceil(this.xMax/base)+1
             let numberOfYSegments = Math.ceil(this.yMax/base)
             for (let seg = 0; seg <= numberOfYSegments; seg++) {
                 this.heatmapData.push({'name': seg*base.toString(), 'data':new Array(numberOfXSegments).fill(0)})
             }
             this.$refs.heatmap.updateSeries(this.heatmapData)
-            for (var coords of this.mouseData.data) {
+            for (var coords of this.mouseData.data.slice(0,parseInt(this.getNumberOfVisualDataPoints))) {
                 for (var serie of this.heatmapData) {
                     if (this.roundToNearestBase(coords.y_coord,base).toString() == serie.name) {
                         serie.data[Math.round(parseInt(coords.x_coord)/base)] += 1
@@ -141,42 +142,51 @@ export default {
             return 0    
         },
         getBenfordDistribution() {
-            for (let data of this.heatmapData) {
-                for (let dataPoint of data) {
-                    this.bendfordsDistribution[parseInt(dataPoint.toString()[0])] += 1
+            // if (this.heatmapData) {
+                console.table(this.heatmapData[0])
+                for (let data of this.heatmapData.data) {
+                    console.log("ABC")
+                    for (let dataPoint of data) {
+                        this.bendfordsDistribution[parseInt(dataPoint.toString()[0])] += 1
+                    }
                 }
-            }
-            console.log(this.bendfordsDistribution)
+            // }
+            
         }
     },
     computed: {
+        ...mapGetters(['getNumberOfVisualDataPoints'])
     },
     watch: {
         mouseData: function() { // watch it
           if (this.mouseData) {
             this.getXMax()
             this.getYMax()
-            this.populateMappedMouseData(50)
+            this.populateMappedMouseData(40)
             // console.log(this.mouseData.data.length)
           }
         
         },
         heatmapData: function() {
             if (this.heatmapData) {
+                this.bendfordsDistribution = new Array(10).fill(0)
+                console.log(this.heatmapData)
                 for (let data of this.heatmapData) {
                     for (let dataPoint of data.data) {
                         this.bendfordsDistribution[parseInt(dataPoint.toString()[0])] += 1
                     }
                 }
             }
-            // console.log(this.bendfordsDistribution)
             var sumBenford = this.bendfordsDistribution.slice(1,this.bendfordsDistribution.length).reduce((num1, num2) => num1 + num2, 0)
-            console.log(sumBenford)
             // var maxBendord = Math.max(...this.bendfordsDistribution.slice(1,this.bendfordsDistribution.length-1))
             for (var i = 1; i < this.bendfordsDistribution.length; i++) {
                 this.bendfordsDistribution[i] = (this.bendfordsDistribution[i]/sumBenford *100).toFixed(1)
             }
-            console.log(this.bendfordsDistribution)
+        },
+        getNumberOfVisualDataPoints: function() {
+            this.getXMax()
+            this.getYMax()
+            this.populateMappedMouseData(40)
         }
     }
 };

@@ -12,7 +12,7 @@
           v-bind="attrs"
           v-on="on"
         >
-          {{getNumberOfDataPoints}}
+          {{dataPointCount}}
           Update Settings
         </v-btn>
       </template>
@@ -59,7 +59,7 @@
                 <v-text-field
                   label="Number of data points of interest:"
                   required
-                  v-model="getNumberOfDataPoints"
+                  v-model="test"
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
@@ -123,25 +123,32 @@ export default {
   data() {
     return {
       dialog: false,
-      dataPointCount: -1
+      dataPointCount: 1000
     }
   },
   computed: {
-    ...mapGetters(['getNumberOfDataPoints'])
+    ...mapGetters(['getNumberOfVisualDataPoints']),
+    test: {
+      get: function() {
+        return this.getNumberOfVisualDataPoints
+      },
+      set: function(newVal) {
+        this.dataPointCount = newVal
+      }
+    }
   },
   methods: {
     ...mapMutations(['changeNumberOfDataPoints']),
     updateGraphSettings() {
       this.dialog = false
-      this.changeNumberOfDataPoints(5)
+      this.changeNumberOfDataPoints(this.dataPointCount)
     }
   },
-  watch: {
-    getNumberOfDataPoints: function() {
-      console.log("123")
-      this.dataPointCount = this.getNumberOfDataPoints
-    }
-  }
+  // watch: {
+  //   getNumberOfDataPoints: function() {
+  //     this.dataPointCount = this.getNumberOfDataPoints
+  //   }
+  // }
 }
 
 </script>

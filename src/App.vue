@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-container class="grey lighten-5 py-0 px-0 mx-3" fluid>
+    <v-container class="grey lighten-5 py-0 px-0" fluid>
       <v-row no-gutters>
         <v-col
           cols="12"
@@ -29,7 +29,7 @@
           <div style="padding-left:6%;">
             <heat-map :mouseData="mouseData"/>
           </div>
-          <v-card-subtitle>The heatmap indicates your mouse usable behaviour</v-card-subtitle>
+          <v-card-subtitle>The heatmap indicates your mouse usable behaviour, current data count: {{mouseDataSize}}</v-card-subtitle>
           <v-card-actions>
             <!-- <v-btn text>
               Change Settings
@@ -112,6 +112,7 @@ export default {
   data() {
     return {
       mouseData: {},
+      mouseDataSize: 0,
       processedMouseData: null,
       gradientCountByType: [],
       magnitudeByFreq: {},
@@ -166,6 +167,9 @@ export default {
         this.getMouseDirectionByFreq()
       }
       // this.processedMouseData.data ? this.getMouseGradientCountByType : console.log("Mouse gradient empty")
+    },
+    mouseData: function() {
+      this.mouseData? this.mouseDataSize = this.mouseData.data.length : this.mouseDataSize = 0
     }
   }
 };

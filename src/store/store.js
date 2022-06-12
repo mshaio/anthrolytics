@@ -5,13 +5,14 @@ Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
-    numberOfDataPoints: 12
+    numberOfDataPoints: 1000
   },
   getters: {
-    getNumberOfDataPoints: state => state.numberOfDataPoints
+    getNumberOfVisualDataPoints: state => state.numberOfDataPoints
   },
   mutations: {
     changeNumberOfDataPoints(state, number) {
+      console.log(state)
       state.numberOfDataPoints = number
     }
   },
