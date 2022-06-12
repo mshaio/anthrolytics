@@ -10,8 +10,9 @@
 </template>
 
 <script>
-
 import { mapGetters } from 'vuex'
+
+const COORD_SEGMENT_SIZE = 40
 
 export default {
     props: {
@@ -19,7 +20,7 @@ export default {
     },
     data: function() {
       return {
-        // mouseData1: Object,
+        COORD_SEGMENT_SIZE,
         bendfordsDistribution: new Array(10).fill(0), 
         xMax: 0,
         yMax:0,
@@ -162,8 +163,7 @@ export default {
           if (this.mouseData) {
             this.getXMax()
             this.getYMax()
-            this.populateMappedMouseData(40)
-            // console.log(this.mouseData.data.length)
+            this.populateMappedMouseData(COORD_SEGMENT_SIZE)
           }
         
         },
@@ -186,7 +186,7 @@ export default {
         getNumberOfVisualDataPoints: function() {
             this.getXMax()
             this.getYMax()
-            this.populateMappedMouseData(40)
+            this.populateMappedMouseData(COORD_SEGMENT_SIZE)
         }
     }
 };
